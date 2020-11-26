@@ -18,9 +18,29 @@ class Product {
   }
 }
 
+class ShoppingCart {
+  item = [];
+
+  render() {
+    const cartEl = document.createElement("section");
+    cartEl.className = "cart";
+    cartEl.innerHTML = `
+    <h2>Total: \$${0}</h2>
+    <button>Order now!</button>
+    `;
+    return cartEl;
+  }
+}
+
 class ProductItem {
   constructor(product) {
     this.product = product;
+  }
+
+  addToCart() {
+    console.log("Adding product to cart");
+    console.log(this);
+    console.log(this.product);
   }
 
   render() {
@@ -37,6 +57,8 @@ class ProductItem {
         </div>
       </div>
       `;
+    const addCartButton = prodEl.querySelector("button");
+    addCartButton.addEventListener("click", this.addToCart.bind(this));
     return prodEl;
   }
 }
@@ -60,8 +82,6 @@ class ProductList {
   constructor() {}
 
   render() {
-    //1 create a referent to the area where I want add the data
-    const renderHook = document.getElementById("app");
     //2 create the element to insert
     const prodList = document.createElement("ul");
     //3 add style class to new element
@@ -73,9 +93,22 @@ class ProductList {
       const prodEl = productItem.render();
       prodList.append(prodEl);
     }
-    renderHook.append(prodList);
+    return prodList;
   }
 }
 
-const productList = new ProductList();
-productList.render();
+class Shop {
+  render() {
+    //1 create a reference to the area where I want add the data
+    const renderHook = document.getElementById("app");
+    const cart = new ShoppingCart();
+    const cartEl = cart.render();
+    const productList = new ProductList();
+    const productListEl = productList.render();
+    renderHook.append(cartEl);
+    renderHook.append(productListEl);
+  }
+}
+
+const shop = new Shop();
+shop.render();
