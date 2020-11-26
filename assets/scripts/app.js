@@ -6,14 +6,14 @@ const productList = {
     {
       title: "A pillow",
       imageUrl:
-        "https://www.publicdomainpictures.net/pictures/250000/t2/decorative-bed-pillows.jpg",
+        "https://www.publicdomainpictures.net/pictures/250000/velka/decorative-bed-pillows.jpg",
       price: "19.99",
       description: "A soft pillow!",
     },
     {
       title: "A carpet",
       imageUrl:
-        "https://www.publicdomainpictures.net/pictures/120000/t2/achtergrond-1434298630JcU.jpg",
+        "https://www.publicdomainpictures.net/pictures/60000/velka/carpet-background.jpg",
       price: "89.99",
       description: "A nice carpet!",
     },
