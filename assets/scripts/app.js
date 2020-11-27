@@ -21,6 +21,11 @@ class Product {
 class ShoppingCart {
   item = [];
 
+  addProduct(product) {
+    this.item.push(product);
+    this.totalOutput.innerHTML = `<h2>Total: \$${1}</h2>`;
+  }
+
   render() {
     const cartEl = document.createElement("section");
     cartEl.className = "cart";
@@ -28,6 +33,7 @@ class ShoppingCart {
     <h2>Total: \$${0}</h2>
     <button>Order now!</button>
     `;
+    this.totalOutput = cartEl.querySelector("h2");
     return cartEl;
   }
 }
@@ -39,8 +45,9 @@ class ProductItem {
 
   addToCart() {
     console.log("Adding product to cart");
-    console.log(this);
     console.log(this.product);
+    //here I use a static method to share data between different classes
+    App.addProductToCart(this.product);
   }
 
   render() {
@@ -101,8 +108,11 @@ class Shop {
   render() {
     //1 create a reference to the area where I want add the data
     const renderHook = document.getElementById("app");
-    const cart = new ShoppingCart();
-    const cartEl = cart.render();
+
+    this.cart = new ShoppingCart();
+
+    // const cart = new ShoppingCart();
+    const cartEl = this.cart.render();
     const productList = new ProductList();
     const productListEl = productList.render();
     renderHook.append(cartEl);
@@ -110,5 +120,27 @@ class Shop {
   }
 }
 
-const shop = new Shop();
-shop.render();
+//create a static class to be able to pass data between two instance
+class App {
+  //declare explicitly static card to highlight it's scope
+  static card;
+
+  static init() {
+    const shop = new Shop();
+    //IMPORTANT: before to be able to acces card
+    //the class shop has to be render because inside it it's created the card
+    shop.render();
+    //shop.card is an instance of Shopping card
+    this.cart = shop.cart;
+  }
+
+  static addProductToCart(product) {
+    //I can call the method .addProduct because this.card is an instance of Shopping card
+    //and the method .addProduct belong to that class
+    //in this way I forward the data product to the instance shoppingCard
+    this.cart.addProduct(product);
+  }
+}
+
+//call the class App inself not an instance
+App.init();
