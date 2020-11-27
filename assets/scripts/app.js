@@ -21,9 +21,25 @@ class Product {
 class ShoppingCart {
   item = [];
 
+  set cardItems(value) {
+    this.item = value;
+    this.totalOutput.innerHTML = `<h2>Total: \$${this.totalAmount.toFixed(
+      2
+    )}</h2>`;
+  }
+
+  get totalAmount() {
+    const sum = this.item.reduce(
+      (previousValue, currentValue) => previousValue + +currentValue.price,
+      0
+    );
+    return sum;
+  }
+
   addProduct(product) {
-    this.item.push(product);
-    this.totalOutput.innerHTML = `<h2>Total: \$${1}</h2>`;
+    const updateItem = [...this.item];
+    updateItem.push(product);
+    this.cardItems = updateItem;
   }
 
   render() {
@@ -123,7 +139,7 @@ class Shop {
 //create a static class to be able to pass data between two instance
 class App {
   //declare explicitly static card to highlight it's scope
-  static card;
+  static cart;
 
   static init() {
     const shop = new Shop();
