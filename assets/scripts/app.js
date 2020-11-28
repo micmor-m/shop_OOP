@@ -26,9 +26,15 @@ class ElementAttribute {
 }
 
 class Component {
-  constructor(renderHookId) {
+  constructor(renderHookId, shouldRender = true) {
     this.hookId = renderHookId;
+    if (shouldRender) {
+      this.render();
+    }
   }
+
+  render() {}
+
   createRootElement(tag, cssClasses, attributes) {
     const rootElement = document.createElement(tag);
     if (cssClasses) {
@@ -74,21 +80,19 @@ class ShoppingCart extends Component {
 
   render() {
     const cartEl = this.createRootElement("section", "cart");
-    // const cartEl = document.createElement("section");
-    // cartEl.className = "cart";
     cartEl.innerHTML = `
     <h2>Total: \$${0}</h2>
     <button>Order now!</button>
     `;
     this.totalOutput = cartEl.querySelector("h2");
-    // return cartEl;
   }
 }
 
 class ProductItem extends Component {
   constructor(product, renderHookId) {
-    super(renderHookId);
+    super(renderHookId, false);
     this.product = product;
+    this.render();
   }
 
   addToCart() {
@@ -100,8 +104,6 @@ class ProductItem extends Component {
 
   render() {
     const prodEl = this.createRootElement("li", "product-item");
-    // const prodEl = document.createElement("li");
-    // prodEl.className = "product-item";
     prodEl.innerHTML = `
       <div>
         <img src="${this.product.imageUrl}" alt="${this.product.title}" ></img>
@@ -115,65 +117,66 @@ class ProductItem extends Component {
       `;
     const addCartButton = prodEl.querySelector("button");
     addCartButton.addEventListener("click", this.addToCart.bind(this));
-    // return prodEl;
   }
 }
 
 class ProductList extends Component {
-  products = [
-    new Product(
-      "A pillow",
-      "https://www.publicdomainpictures.net/pictures/250000/velka/decorative-bed-pillows.jpg",
-      "A soft pillow!",
-      "19.99"
-    ),
-    new Product(
-      "A carpet",
-      "https://www.publicdomainpictures.net/pictures/60000/velka/carpet-background.jpg",
-      "A nice carpet!",
-      "89.99"
-    ),
-  ];
+  products = [];
 
   constructor(renderHookId) {
     super(renderHookId);
+    this.fetchProducts();
+  }
+
+  //to simulate the gathering of the data from a database
+  fetchProducts() {
+    this.products = [
+      new Product(
+        "A pillow",
+        "https://www.publicdomainpictures.net/pictures/250000/velka/decorative-bed-pillows.jpg",
+        "A soft pillow!",
+        "19.99"
+      ),
+      new Product(
+        "A carpet",
+        "https://www.publicdomainpictures.net/pictures/60000/velka/carpet-background.jpg",
+        "A nice carpet!",
+        "89.99"
+      ),
+    ];
+    //This makes sure that the render will be call when all products are present
+    this.renderProducts();
+  }
+
+  renderProducts() {
+    //2 create the element to insert
+    //3 add style class to new element
+    //4 create the logic to render a single product in the list
+    for (const product of this.products) {
+      new ProductItem(product, "prod-list");
+    }
   }
 
   render() {
-    const prodList = this.createRootElement("ul", "products-list", [
+    this.createRootElement("ul", "products-list", [
       new ElementAttribute("id", "prod-list"),
     ]);
-    //2 create the element to insert
-    // const prodList = document.createElement("ul");
-    //3 add style class to new element
-    // prodList.className = "products-list";
-    // prodList.id = "prod-list";
-    //4 create the logic to render a single product in the list
-    for (const product of this.products) {
-      const productItem = new ProductItem(product, "prod-list");
-      // const prodEl = productItem.render();
-      productItem.render();
-      // prodList.append(prodEl);
+    //to make ure all data have been loaded from the database
+    if (this.products && this.products.length > 0) {
+      this.renderProducts();
     }
-    // return prodList;
   }
 }
 
 class Shop extends Component {
+  constructor() {
+    super();
+  }
+
   render() {
     //1 create a reference to the area where I want add the data
-    // const renderHook = document.getElementById("app");
-
     this.cart = new ShoppingCart("app");
-
-    // const cart = new ShoppingCart();
-    // const cartEl = this.cart.render();
-    this.cart.render();
-    const productList = new ProductList("app");
-    // const productListEl = productList.render();
-    productList.render();
-    // renderHook.append(cartEl);
-    // renderHook.append(productListEl);
+    new ProductList("app");
   }
 }
 
@@ -186,7 +189,7 @@ class App {
     const shop = new Shop();
     //IMPORTANT: before to be able to acces card
     //the class shop has to be render because inside it it's created the card
-    shop.render();
+    // shop.render();
     //shop.card is an instance of Shopping card
     this.cart = shop.cart;
   }
